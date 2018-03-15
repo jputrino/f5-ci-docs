@@ -11,10 +11,7 @@ before_install:
 - env | grep -vE "^(PATH=)" > .env
 install: true
 script:
-- docker run --rm -i --env-file .env -v $PWD:/test --workdir /test \
-  ${DOC_IMG} /bin/bash -s <<EOF \
-  echo "${MY_TEST_VARIABLE}" \
-  EOF
+- docker run --rm -i --env-file .env -v $PWD:/test --workdir /test ${DOC_IMG} /bin/bash -s <<EOF echo "${MY_TEST_VARIABLE}" EOF
 #- ./scripts/docker-docs.sh ./scripts/test-docs.sh
 deploy:
 # Deploy to staging website
