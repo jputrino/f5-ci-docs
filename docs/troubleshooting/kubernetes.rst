@@ -224,7 +224,7 @@ In the examples below, the servicePort and serviceName don't match the name and 
    apiVersion: v1
    ...
    data:
-    schema: "f5schemadb://bigip-virtual-server_v0.1.4.json"
+    schema: "f5schemadb://bigip-virtual-server_v0.1.7.json"
      data: |
        {
          "virtualServer": {
