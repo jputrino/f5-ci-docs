@@ -38,7 +38,7 @@ spec:
             # http://clouddocs.f5.com/products/connectors/k8s-bigip-ctlr/latest
             "--bigip-username=$(BIGIP_USERNAME)",
             "--bigip-password=$(BIGIP_PASSWORD)",
-            "--bigip-url=10.190.24.171",
+            "--bigip-url=10.10.10.10",
             "--bigip-partition=openshift",
             "--pool-member-type=cluster",
             "--openshift-sdn-name=/Common/openshift_vxlan",

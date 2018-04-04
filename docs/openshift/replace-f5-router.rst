@@ -54,7 +54,7 @@ Install the |kctlr|
 #. :ref:`Create a Deployment <create-openshift-deployment>` for the |kctlr|.
 
    .. literalinclude:: /openshift/config_examples/f5-k8s-bigip-ctlr_openshift_routes.yaml
-   :linenos:
+      :linenos:
 
 #. :ref:`Upload the Deployment <upload openshift deployment>` to the OpenShift API server.
 

@@ -176,7 +176,7 @@ In the examples below, the Namespace in the Service doesn't match that provided 
              args: [
                "--bigip-username=$(BIGIP_USERNAME)",
                "--bigip-password=$(BIGIP_PASSWORD)",
-               "--bigip-url=10.190.24.171",
+               "--bigip-url=10.10.10.10",
                "--bigip-partition=kubernetes",
                # THE LINE BELOW TELLS THE CONTROLLER WHAT NAMESPACE TO WATCH
                "--namespace=prod",
