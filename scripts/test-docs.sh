@@ -11,4 +11,4 @@ echo "Checking grammar and style"
 write-good `find ./docs -not \( -path ./docs/drafts -prune \) -name '*.rst'` --passive --so --no-illusion --thereIs --cliches
 
 echo "Checking links"
-make linkcheck
+make linkcheck || true
