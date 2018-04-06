@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+build_env="$1"
+shift
+
+usage() {
+   cat <<EOF
+Usage: $0 <build_env>
+<build_env> options:    staging
+                        production
+Publish the documentation to either the staging site (https://clouddocs.f5networks.net) or
+the production site (https://clouddocs.f5.com)
+EOF
+}
+
+die() {
+  printf "%s\n" "$*" >&2
+  usage
+  exit 1
+}
+
+: ${DOC_IMG:=f5devcentral/containthedocs:latest}
+
+set -e
+
+exec docker run -i \
+   --env-file .env \
+   -v $PWD:/test --workdir /test \
+   ${DOC_IMG} /bin/bash -s <<EOF
+
+if [ "$build_env" == "staging" ]; then
+   # Publish docs to clouddocs.f5networks.net
+   publish-docs-to-staging travis
+   printf "Success!" '%s\n' "Your documentation is live at:" '%s\n' "https://${AWS_S3_BUCKET}/under-review/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}"
+fi
+
+if [ "$build_env" == "production"  ]; then
+   # Publish docs to clouddocs.f5.com
+   export AWS_S3_BUCKET=$S3_PROD
+   publish-product-docs-to-prod f5-ipam-ctlr v$CTLR_VERSION
+   # create invalidation to clear cloudfront cache
+   aws cloudfront create-invalidation --distribution-id $AWS_DIST --paths /products/connectors/f5-ipam-ctlr
+   printf "Success!" '%s\n' "Your documentation is live at:" '%s\n' "https://${AWS_S3_BUCKET}/products/connectors/f5-ipam-ctlr/${VERSION}"
+fi
+
+if [ "$build_env == "" ]; then
+   die "You did not provide a deployment environment. Please indicate whether you want to deploy to staging or production."
+
+EOF
+
