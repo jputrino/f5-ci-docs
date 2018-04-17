@@ -8,8 +8,8 @@ usage() {
 Usage: $0 <build_env>
 <build_env> options:    staging
                         production
-Publish the documentation to either the staging site (https://clouddocs.f5networks.net) or
-the production site (https://clouddocs.f5.com)
+Publish the documentation to the staging site (https://clouddocs.f5networks.net) for review or to
+the live production site (https://clouddocs.f5.com)
 EOF
 }
 
@@ -28,23 +28,23 @@ exec docker run -i \
    -v $PWD:/test --workdir /test \
    ${DOC_IMG} /bin/bash -s <<EOF
 
+if [ "$build_env == "" ]; then
+   die "You did not provide a deployment environment. Please indicate whether you want to deploy to staging or production."
+
 if [ "$build_env" == "staging" ]; then
    # Publish docs to clouddocs.f5networks.net
    publish-docs-to-staging travis
-   printf "Success!" '%s\n' "Your documentation is live at:" '%s\n' "https://${AWS_S3_BUCKET}/under-review/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}"
+   printf "Success!" '%s\n' "Your documentation is staged at:" '%s\n' "https://${AWS_S3_BUCKET}/under-review/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}"
 fi
 
 if [ "$build_env" == "production"  ]; then
    # Publish docs to clouddocs.f5.com
    export AWS_S3_BUCKET=$S3_PROD
-   publish-product-docs-to-prod f5-ipam-ctlr v$CTLR_VERSION
+   publish-docs-to-prod $PROD_PATH v$VERSION
+   publish-docs-to-prod $PROD_PATH latest
    # create invalidation to clear cloudfront cache
-   aws cloudfront create-invalidation --distribution-id $AWS_DIST --paths /products/connectors/f5-ipam-ctlr
-   printf "Success!" '%s\n' "Your documentation is live at:" '%s\n' "https://${AWS_S3_BUCKET}/products/connectors/f5-ipam-ctlr/${VERSION}"
+   aws cloudfront create-invalidation --distribution-id $AWS_DIST --paths $PROD_PATH/latest
+   printf "Success!" '%s\n' "Your documentation is live at:" '%s\n' "https://${AWS_S3_BUCKET}/$PROD_PATH/${VERSION}"
 fi
 
-if [ "$build_env == "" ]; then
-   die "You did not provide a deployment environment. Please indicate whether you want to deploy to staging or production."
-
 EOF
-
